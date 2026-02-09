@@ -323,7 +323,6 @@ const App = () => {
                   </div>
                   <div className="space-y-3">
                     <p className="text-[11px] text-green-100/60 leading-relaxed">Fasilitas aman dengan monitor 24 jam dan sistem pelacakan barcode.</p>
-                    <ArrowUpRight className="w-5 h-5 opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0" />
                   </div>
                 </div>
               </div>
