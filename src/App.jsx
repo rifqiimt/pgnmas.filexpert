@@ -6,28 +6,29 @@ import {
   Phone, 
   Mail, 
   Globe,
-  Instagram,
-  Facebook,
-  Linkedin,
-  Twitter,
-  ShieldCheck,
-  Database,
-  Search,
-  Users,
-  Award,
-  ArrowUpRight,
-  CheckCircle2,
-  ChevronRight,
-  Zap,
-  Cpu,
-  Building2,
-  FileCheck,
-  TrendingUp,
-  PieChart,
+  Instagram, 
+  Facebook, 
+  Linkedin, 
+  Twitter, 
+  ShieldCheck, 
+  Database, 
+  Search, 
+  Users, 
+  Award, 
+  ArrowUpRight, 
+  CheckCircle2, 
+  ChevronRight, 
+  Zap, 
+  Cpu, 
+  Building2, 
+  FileCheck, 
+  TrendingUp, 
+  PieChart, 
   Boxes
 } from 'lucide-react';
 
-/** * Komponen Wrapper untuk Animasi Fade In yang berulang setiap kali scroll
+/** * Komponen Wrapper untuk Animasi Fade In (TRIGGER ONCE)
+ * Animasi hanya berjalan satu kali saat elemen pertama kali masuk viewport.
  */
 const FadeInSection = ({ children, delay = 0 }) => {
   const [isVisible, setVisible] = useState(false);
@@ -36,13 +37,16 @@ const FadeInSection = ({ children, delay = 0 }) => {
   useEffect(() => {
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
-        // Mengubah status sesuai dengan apakah elemen sedang terlihat atau tidak
-        // Dengan begini, animasi akan terulang kembali saat elemen masuk layar lagi
-        setVisible(entry.isIntersecting);
+        // PERUBAHAN DI SINI:
+        // Jika elemen terlihat (intersecting), setVisible true DAN stop observe.
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.unobserve(entry.target); // Stop mengamati setelah muncul sekali
+        }
       });
     }, { 
-      threshold: 0.1, // Trigger saat 10% elemen terlihat
-      rootMargin: "0px 0px -50px 0px" // Memberikan sedikit margin agar animasi terasa lebih natural
+      threshold: 0.1, 
+      rootMargin: "0px 0px -50px 0px" 
     });
 
     const { current } = domRef;
@@ -78,10 +82,17 @@ const Logo = ({ className = "" }) => (
       <img 
         src={BRAND_LOGO} 
         alt="Logo FileExpert" 
+        // Fallback agar tidak rusak jika gambar tidak ada
+        onError={(e) => {
+             e.target.style.display = 'none';
+             e.target.nextSibling.style.display = 'flex'; // Show fallback
+        }}
         className="h-8 w-auto object-contain transition-transform group-hover:scale-105" 
       />
-    ) : (
-      <>
+    ) : null}
+    
+    {/* Fallback Logo Logic (jika image error/null) */}
+    <div className="hidden items-center gap-2.5" style={{ display: BRAND_LOGO ? 'none' : 'flex' }}>
         <div className="w-9 h-9 bg-green-700 rounded-lg flex items-center justify-center rotate-3 group-hover:rotate-0 transition-transform shadow-sm border border-green-600/20">
           <span className="text-yellow-400 font-black italic text-xl leading-none select-none">X</span>
         </div>
@@ -89,8 +100,7 @@ const Logo = ({ className = "" }) => (
           <span className="font-black text-green-900 tracking-tighter text-lg uppercase leading-none">FileExpert</span>
           <span className="text-[7px] font-bold text-yellow-600 tracking-[0.3em] uppercase leading-tight mt-0.5">Archive Solution</span>
         </div>
-      </>
-    )}
+    </div>
   </div>
 );
 
@@ -190,6 +200,7 @@ const App = () => {
               <div className="bg-yellow-400 rounded-[2.5rem] p-3 rotate-1 shadow-xl relative overflow-hidden group max-w-md mx-auto">
                 <img 
                   src="file1.jpg" 
+                  onError={(e) => e.target.src = 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=1000'} // Placeholder fallback
                   alt="Pusat Arsip" 
                   className="w-full h-[380px] object-cover rounded-[2rem] -rotate-1 group-hover:rotate-0 transition-transform duration-700"
                 />
@@ -214,7 +225,12 @@ const App = () => {
               <div key={loop} className="flex gap-16 items-center">
                 {clients.map((client, index) => (
                   <div key={index} className="flex items-center gap-4 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-500 cursor-default group">
-                    <img src={client.logo} alt={client.name} className="h-8 w-auto object-contain max-w-[90px]" />
+                    <img 
+                        src={client.logo} 
+                        alt={client.name} 
+                        className="h-8 w-auto object-contain max-w-[90px]" 
+                        onError={(e) => e.target.style.display = 'none'} // Hide broken images in marquee
+                    />
                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-green-900/40 group-hover:text-green-900 transition-colors">
                       {client.name}
                     </span>
@@ -333,7 +349,7 @@ const App = () => {
                 <div className="h-full flex flex-col justify-between">
                   <Users className="w-8 h-8 text-green-950 mb-6" />
                   <h4 className="text-lg font-black text-green-950 leading-tight mb-2">Manage Service</h4>
-                  <p className="text-[10px] font-bold text-green-900 leading-relaxed opacity-70">Outsourcing kearsipan dengan tenaga ahli arsiparis tersertifikasi.</p>
+                  <p className="text[10px] font-bold text-green-900 leading-relaxed opacity-70">Outsourcing kearsipan dengan tenaga ahli arsiparis tersertifikasi.</p>
                 </div>
               </div>
             </FadeInSection>
